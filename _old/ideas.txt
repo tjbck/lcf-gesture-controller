@@ -1,0 +1,5 @@
+- phone accelerometer
+- phone touch control
+
+- gesture control
+- hand magnet
