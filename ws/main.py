@@ -16,7 +16,7 @@ sio = socketio.AsyncServer(cors_allowed_origins=[], async_mode='asgi')
 
 
 def get_angle(x1,y1,x2,y2):
-    return int(math.degrees(math.atan2(y2-y1, x2-x1)) % 360)
+    return str(int(math.degrees(math.atan2(y2-y1, x2-x1)) % 360))
 
 @sio.event
 async def connect(sid, environ):
