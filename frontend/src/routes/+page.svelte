@@ -16,16 +16,18 @@
 			y: null
 		}
 	};
-	let sensorData = {
-		absolute: null,
-		alpha: null,
-		beta: null,
-		gamma: null
-	};
 
-	let logs = '';
+	let angle = 0;
+	let heatTime = 200;
 
 	let mainElement;
+
+	$: if (socket) {
+		socket.emit('data-event', {
+			type: 'heat',
+			data: heatTime
+		});
+	}
 
 	const sendData = () => {
 		if (socket) {
@@ -38,35 +40,8 @@
 		}
 	};
 
-	const handleOrientation = (e) => {
-		logs += JSON.stringify(e);
-		sensorData.absolute = e.absolute;
-		sensorData.alpha = e.alpha;
-		sensorData.beta = e.beta;
-		sensorData.gamma = e.gamma;
-
-		socket.emit('event', {
-			type: 'sensor',
-			data: {
-				...sensorData
-			}
-		});
-	};
-
-	const activateSensor = () => {
-		alert('activateSensor');
-
-		socket.emit('data-event', {
-			type: 'sensor',
-			data: 'hello'
-		});
-		// DeviceMotionEvent.requestPermission()
-		// 	.then((response) => {
-		// 		if (response == 'granted') {
-		// 			window.addEventListener('deviceorientation', handleOrientation);
-		// 		}
-		// 	})
-		// 	.catch(alert);
+	const getAngle = (x1, y1, x2, y2) => {
+		return Math.round(((Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI + 360) % 360);
 	};
 
 	onMount(() => {
@@ -96,30 +71,65 @@
 			// console.log('send data');
 			// alert('sentdata');
 
+			angle = getAngle(touchData.start.x, touchData.start.y, touchData.end.x, touchData.end.y);
+
 			sendData();
 		});
 	});
 </script>
 
-<div class="min-h-screen w-screen hover:bg-gray-100 touch-none" bind:this={mainElement}>
-	<button on:click={activateSensor}> Activate Sensor </button>
+<div class="min-h-screen w-screen touch-none flex flex-col justify-center">
+	<div />
 
-	<div>
-		<div>
-			{JSON.stringify(touchData)}
-		</div>
-		<div>
-			{sensorData.alpha}
-		</div>
-		<div>
-			{sensorData.beta}
-		</div>
-		<div>
-			{sensorData.gamma}
+	<div class=" w-full h-full flex-1 flex hover:bg-gray-100" bind:this={mainElement}>
+		<div class="m-auto">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				style="transform: rotate({angle - 270}deg);"
+				viewBox="0 0 24 24"
+				fill="currentColor"
+				class=" w-20 h-20"
+			>
+				<path
+					fill-rule="evenodd"
+					d="M11.47 2.47a.75.75 0 011.06 0l3.75 3.75a.75.75 0 01-1.06 1.06l-2.47-2.47V21a.75.75 0 01-1.5 0V4.81L8.78 7.28a.75.75 0 01-1.06-1.06l3.75-3.75z"
+					clip-rule="evenodd"
+				/>
+			</svg>
+
+			<div class=" text-center font-semibold text-lg">
+				{angle}deg
+			</div>
 		</div>
 	</div>
 
-	<div>
-		{logs}
+	<div class=" m-3 text-center font-medium">
+		<div class=" text-sm text-left font-medium mb-1">Heat Time</div>
+		<div class="flex">
+			<button
+				class=" bg-gray-300 rounded-l p-3 px-10"
+				on:click={() => {
+					heatTime = Math.max(0, heatTime - 50);
+				}}
+			>
+				-
+			</button>
+			<input
+				class="w-full text-center outline-none bg-gray-300"
+				type="number"
+				min="0"
+				max="500"
+				disabled
+				bind:value={heatTime}
+			/>
+			<button
+				class=" bg-gray-300 rounded-r p-3 px-10"
+				on:click={() => {
+					heatTime = Math.min(500, heatTime + 50);
+				}}
+			>
+				+
+			</button>
+		</div>
 	</div>
 </div>

@@ -10,7 +10,7 @@ for p in ports:
 
 # # TODO combine the two
 # print(len(ports), 'ports found')
-ser = serial.Serial('COM6',115200) 
+# ser = serial.Serial('COM6',115200) 
 # create a Socket.IO server
 sio = socketio.AsyncServer(cors_allowed_origins=[], async_mode='asgi')
 
@@ -32,14 +32,24 @@ async def disconnect(sid):
 @sio.on('data-event')
 async def data_event_handler(sid, data):
     print('data_event_handler', sid, data)
-    angle = None
     if(data['type'] == 'touch'):
         angle = get_angle(data['data']['start']['x'], data['data']['start']['y'], data['data']['end']['x'], data['data']['end']['y'])
+        # ser.write(f'a{angle}'.encode())
+        # ser.write(angle.encode())
+        print(angle)
+
+    if(data['type'] == 'heat'):
+        print('heat_time', data['data'])
+        # ser.write(f'h{data['data']}'.encode())
+
+
+    # data = Serial.readString();
+    # data.charAt(0)
+    # if 'a' -> angle
+    # if 'h' -> heat
+    # data++
+    # atoi(data)
     
-    
-    print(angle)
-    
-    ser.write(angle.encode())
 
 
 # wrap with ASGI application
