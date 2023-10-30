@@ -15,14 +15,15 @@ mp_drawing_styles = mp.solutions.drawing_styles
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
-
-
+DETECTIONS = []
 
 
 def run(model: str, num_hands: int,
         min_hand_detection_confidence: float,
         min_hand_presence_confidence: float, min_tracking_confidence: float,
         camera_id: int, width: int, height: int) -> None:
+
+
   """Continuously run inference on images acquired from the camera.
 
   Args:
@@ -40,6 +41,7 @@ def run(model: str, num_hands: int,
   """
 
   # Start capturing video input from the camera
+  global DETECTIONS
   cap = cv2.VideoCapture(camera_id)
   cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -140,7 +142,17 @@ def run(model: str, num_hands: int,
         # print(gestures)
         category_name = gestures[0][0].category_name
         score = round(gestures[0][0].score, 2)
-        result_text = category_name + ' (' + str(score) + ')'
+
+        DETECTIONS.append(category_name)
+        DETECTIONS = DETECTIONS[-10:]
+        print(DETECTIONS)
+        print(DETECTIONS.count(DETECTIONS[0]))
+
+        if(DETECTIONS.count(DETECTIONS[0]) == len(DETECTIONS)):
+            result_text = category_name + 'Confirmed'
+        else:
+            result_text = category_name + ' (' + str(score) + ')'
+          
 
         # Compute text size
         text_size = \
