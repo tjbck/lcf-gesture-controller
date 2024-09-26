@@ -111,7 +111,7 @@ def run(
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         # Compress the image to 300x300
-        rgb_image = cv2.resize(rgb_image, (300, 300))
+        rgb_image = cv2.resize(rgb_image, (100, 100))
 
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
 
