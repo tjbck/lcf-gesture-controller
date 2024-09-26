@@ -48,6 +48,7 @@ def run(
     # Start capturing video input from the camera
     global DETECTIONS
     cap = cv2.VideoCapture(camera_id)
+
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
@@ -228,7 +229,7 @@ def run(
 
 
 def main():
-    run("gesture_recognizer.task", int(1), 0.5, 0.5, 0.5, int(0), 640, 480)
+    run("gesture_recognizer.task", int(1), 0.5, 0.5, 0.5, int(0), 320, 240)
 
 
 if __name__ == "__main__":
