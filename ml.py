@@ -229,7 +229,7 @@ def run(
 
 
 def main():
-    run("gesture_recognizer.task", int(1), 0.5, 0.5, 0.5, int(0), 320, 240)
+    run("gesture_recognizer.task", int(1), 0.5, 0.5, 0.5, int(0), 160, 120)
 
 
 if __name__ == "__main__":
